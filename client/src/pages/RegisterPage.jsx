@@ -49,7 +49,7 @@ const RegisterPage = () => {
   return (
     <div className="mt-4 flex grow items-center justify-around p-4 md:p-0">
       <div className="mb-40">
-        <h1 className="mb-4 text-center text-4xl">Register</h1>
+        <h1 className="mb-4 text-center text-4xl" style={{marginTop:"60px"}}>Register</h1>
         <form className="mx-auto max-w-md" onSubmit={handleFormSubmit}>
           <input
             name="name"
