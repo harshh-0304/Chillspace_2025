@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import axiosInstance from '@/utils/axios';
-
+import ReviewForm from '../components/ReviewForm';
+import ReviewList from '../components/ReviewList';
 import Spinner from '@/components/ui/Spinner';
 import AddressLink from '@/components/ui/AddressLink';
 import BookingWidget from '@/components/ui/BookingWidget';
@@ -64,10 +65,13 @@ const PlacePage = () => {
         <div className="mb-4 mt-2 text-sm leading-5 text-gray-700">
           {place.extraInfo}
         </div>
-       
+         {/* 🔥 Reviews */}
+      <ReviewForm placeId={id} onReviewAdded={() => window.location.reload()} />
+      <ReviewList placeId={id} />
+    </div>
 
       </div>
-    </div>
+  
   );
 };
 

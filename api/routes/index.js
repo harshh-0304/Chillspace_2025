@@ -3,6 +3,8 @@ const router = express.Router();
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 
+const reviewRoutes = require('./reviewRoutes');
+
 // multer
 const  upload = multer({ dest: '/tmp' });
 
@@ -55,7 +57,7 @@ router.post('/upload', upload.array('photos', 100), async (req, res) => {
 router.use('/user', require('./user'));
 router.use('/places', require('./place'));
 router.use('/bookings', require('./booking'));
-
+router.use("/reviews", reviewRoutes);
 
 
 module.exports = router;
