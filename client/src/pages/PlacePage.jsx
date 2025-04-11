@@ -64,6 +64,8 @@ const PlacePage = () => {
         <div className="mb-4 mt-2 text-sm leading-5 text-gray-700">
           {place.extraInfo}
         </div>
+       
+
       </div>
     </div>
   );

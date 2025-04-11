@@ -57,4 +57,5 @@ router.use('/places', require('./place'));
 router.use('/bookings', require('./booking'));
 
 
+
 module.exports = router;
