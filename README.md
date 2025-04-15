@@ -1,4 +1,4 @@
-# Airbnb Clone
+# Airbnb Clone (chilspace)
 
 ## Overview
 
@@ -6,12 +6,7 @@ This project is a full-stack web application developed as a clone of Airbnb usin
 
 ## Getting Started
 
-1. **Clone the Repository:**
 
-   ```bash
-   git clone https://github.com/rahul4019/airbnb-clone.git
-
-   ```
 
 2. **Install dependencies:**
 
