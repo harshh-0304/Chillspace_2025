@@ -5,6 +5,7 @@ const multer = require('multer');
 const paymentRoutes = require('./paymentRoutes');
 const reviewRoutes = require('./reviewRoutes');
 
+
 // multer
 const  upload = multer({ dest: '/tmp' });
 
@@ -59,5 +60,8 @@ router.use('/places', require('./place'));
 router.use('/bookings', require('./booking'));
 router.use("/reviews", reviewRoutes);
 router.use('/payment', paymentRoutes); 
+
+
+
 
 module.exports = router;
