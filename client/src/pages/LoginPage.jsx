@@ -22,7 +22,12 @@ const LoginPage = () => {
     const response = await auth.login(formData);
     if (response.success) {
       toast.success(response.message);
-      setRedirect(true);
+      // 🧠 Save user in localStorage
+  localStorage.setItem("user", JSON.stringify(response.user));
+  if (response.token) {
+    localStorage.setItem("token", response.token);
+  }
+  setRedirect(true);
     } else {
       toast.error(response.message);
     }

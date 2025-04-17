@@ -4,6 +4,33 @@ const bcrypt = require('bcryptjs')
 const cloudinary = require('cloudinary').v2;
 
 
+
+// Get all users
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find(); // This fetches all users from the database
+
+    if (!users) {
+      return res.status(404).json({
+        message: 'No users found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Internal server error',
+      error,
+    });
+  }
+};
+
+
+
+
 // Register/SignUp user
 exports.register = async (req, res) => {
   try {

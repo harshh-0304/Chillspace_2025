@@ -2,6 +2,11 @@ import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Slide, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import DashboardAdmin from './components/admin/DashboardAdmin'; // <-- Ensure this is present!
+
+import AdminLayout from "./components/admin/AdminLayout";
+import UsersAdmin from "./components/admin/UsersAdmin";
+import PlacesAdmin from "./components/admin/PlacesAdmin";
 
 import Layout from './components/ui/Layout';
 import IndexPage from './pages/IndexPage';
@@ -47,7 +52,14 @@ function App() {
                 path="/account/bookings/:id"
                 element={<SingleBookedPlace />}
               />
-              <Route path="*" element={<NotFoundPage />} />
+          <Route path="/admin" element={<AdminLayout />}>
+  <Route index element={<DashboardAdmin />} />
+  <Route path="users" element={<UsersAdmin />} />
+  <Route path="places" element={<PlacesAdmin />} />
+</Route>
+
+
+      <Route path="*" element={<NotFoundPage />} />
             </Route>
           </Routes>
           <ToastContainer autoClose={2000} transition={Slide} />
