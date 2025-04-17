@@ -2,35 +2,47 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 export default function DashboardAdmin() {
-  const [places, setPlaces] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [placesCount, setPlacesCount] = useState(0);
+  const [usersCount, setUsersCount] = useState(0);
 
   useEffect(() => {
-    // Update the URL to point to your local backend API
-    axios.get('http://localhost:4000/places') // Backend for places
-      .then(res => setPlaces(res.data))
-      .catch(() => {
-        // Handle error if backend call fails
-        console.error("Failed to fetch places");
+    // Fetch places
+    axios.get('http://localhost:4000/places/')
+      .then(res => {
+        const data = Array.isArray(res.data) ? res.data : res.data.places || [];
+        setPlacesCount(data.length);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch places:", err);
+        setPlacesCount(0);
       });
 
-    axios.get('http://localhost:4000/user') // Backend for users
-      .then(res => setUsers(res.data))
-      .catch(() => {
-        // Fake user list if API is unavailable
-        setUsers([
-          { _id: '1', name: 'Kiyo', email: 'admin@chillspace.com' },
-          { _id: '2', name: 'Demo User', email: 'user@chillspace.com' },
-        ]);
+    // Fetch users
+    axios.get('http://localhost:4000/user')
+      .then(res => {
+        const data = Array.isArray(res.data) ? res.data : res.data.users || [];
+        setUsersCount(data.length);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch users:", err);
+        setUsersCount(2);
       });
   }, []);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-      <div className="space-y-2">
-        <p>🔹 Total Listings: {places.length}</p>
-        <p>👤 Total Users: {users.length}</p>
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-8 bg-gray-100">
+      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+        <h1 className="text-3xl font-extrabold mb-6 text-gray-800 text-center">📊 Admin Dashboard</h1>
+        <div className="space-y-4 text-lg">
+          <div className="flex justify-between bg-blue-100 text-blue-900 p-4 rounded-lg">
+            <span>Total Listings:</span>
+            <span className="font-bold">{placesCount}</span>
+          </div>
+          <div className="flex justify-between bg-green-100 text-green-900 p-4 rounded-lg">
+            <span>Total Users:</span>
+            <span className="font-bold">{usersCount}</span>
+          </div>
+        </div>
       </div>
     </div>
   );
