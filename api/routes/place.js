@@ -1,6 +1,6 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { isLoggedIn } = require('../middlewares/user');
+const { isLoggedIn, hasRole } = require("../middlewares/auth");
 
 const {
   addPlace,
@@ -8,19 +8,26 @@ const {
   updatePlace,
   singlePlace,
   userPlaces,
-  searchPlaces
-} = require('../controllers/placeController');
+  searchPlaces,
+  deletePlace,
+} = require("../controllers/placeController");
 
-router.route('/').get(getPlaces);
+// Public routes
+router.route("/").get(getPlaces);
+router.route("/:id").get(singlePlace);
+router.route("/search/:key").get(searchPlaces);
 
 // Protected routes (user must be logged in)
-router.route('/add-places').post(isLoggedIn, addPlace);
-router.route('/user-places').get(isLoggedIn, userPlaces);
-router.route('/update-place').put(isLoggedIn, updatePlace);
+// Only hosts and admins can add places (role check is in controller)
+router.route("/add-places").post(isLoggedIn, addPlace);
 
-// Not Protected routed but sequence should not be interfered with above routes
-router.route('/:id').get(singlePlace);
-router.route('/search/:key').get(searchPlaces)
+// User specific routes
+router.route("/user-places/:id").get(isLoggedIn, userPlaces);
 
+// Update route (ownership or admin check is in controller)
+router.route("/update-place").put(isLoggedIn, updatePlace);
+
+// Delete route (ownership or admin check is in controller)
+router.route("/delete-place/:id").delete(isLoggedIn, deletePlace);
 
 module.exports = router;

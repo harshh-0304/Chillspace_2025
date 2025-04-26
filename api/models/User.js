@@ -1,57 +1,9 @@
-// const mongoose = require("mongoose");
-// const bcrypt = require('bcryptjs')
-// const jwt = require('jsonwebtoken')
+const { Schema, model } = require("mongoose");
+const bcrypt = require("bcrypt"); // Make sure this is imported correctly
+const jwt = require("jsonwebtoken"); // Make sure this is imported correctly
+const { isEmail } = require("validator");
 
-
-// const userSchema = new mongoose.Schema({
-//   name: {
-//     type: String,
-//     required: true,
-//   },
-//   email: {
-//     type: String,
-//     unique: true,
-//     required: true,
-//   },
-//   password: {
-//     type: String,
-//     required: true,
-//   },
-//   picture: {
-//     type: String,
-//     required: true,
-//     default: 'https://res.cloudinary.com/rahul4019/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1695133265/pngwing.com_zi4cre.png'
-//   }
-// });
-
-// // encrypt password before saving it into the DB
-// userSchema.pre("save", async function (next) {
-//   this.password = await bcrypt.hash(this.password, 10)
-// })
-
-// // create and return jwt token
-// userSchema.methods.getJwtToken = function () {
-//   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-//     expiresIn: process.env.JWT_EXPIRY,
-//   })
-// }
-
-// // validate the password
-// userSchema.methods.isValidatedPassword = async function (userSentPassword) {
-//   return await bcrypt.compare(userSentPassword, this.password)
-// }
-
-
-// const User = mongoose.model("User", userSchema);
-
-// module.exports = User;
-
-const mongoose = require("mongoose");
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const validator = require('validator'); // For email validation (install via `npm install validator`)
-
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
   name: {
     type: String,
     required: [true, "Name is required"],
@@ -64,8 +16,7 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: {
       validator: function (value) {
-        return validator.isEmail(value); // Uses 'validator' library
-        // Alternative (regex): return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        return isEmail(value); // Uses 'validator' library
       },
       message: "Please enter a valid email address",
     },
@@ -78,19 +29,64 @@ const userSchema = new mongoose.Schema({
     validate: {
       validator: function (value) {
         // At least 1 uppercase, 1 lowercase, 1 number, 1 special char
-        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value);
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+          value
+        );
       },
-      message: "Password must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character",
+      message:
+        "Password must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character",
     },
-   
+  },
+  role: {
+    type: String,
+    enum: ["guest", "host", "admin"],
+    default: "guest", // By default, users are registered as guests
+    required: true,
   },
   picture: {
     type: String,
     required: true,
-    default: 'https://res.cloudinary.com/rahul4019/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1695133265/pngwing.com_zi4cre.png'
-  }
-  ,
-  
+    default:
+      "https://res.cloudinary.com/rahul4019/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1695133265/pngwing.com_zi4cre.png",
+  },
+  // Additional fields for host role
+  hostInfo: {
+    type: {
+      verified: {
+        type: Boolean,
+        default: false,
+      },
+      properties: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Property",
+        },
+      ],
+      joinedDate: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+    default: {},
+  },
+  // Fields for guests
+  guestInfo: {
+    type: {
+      bookings: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Booking",
+        },
+      ],
+      reviews: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Review",
+        },
+      ],
+    },
+    default: {},
+  },
 });
 
 // Encrypt password before saving
@@ -102,7 +98,7 @@ userSchema.pre("save", async function (next) {
 
 // JWT Token generation
 userSchema.methods.getJwtToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+  return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRY,
   });
 };
@@ -112,5 +108,5 @@ userSchema.methods.isValidatedPassword = async function (userSentPassword) {
   return await bcrypt.compare(userSentPassword, this.password);
 };
 
-const User = mongoose.model("User", userSchema);
+const User = model("User", userSchema);
 module.exports = User;

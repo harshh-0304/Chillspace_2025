@@ -6,7 +6,8 @@ const cookieSession = require("cookie-session");
 const cookieParser = require("cookie-parser");
 const cloudinary = require("cloudinary").v2;
 
-// connect with database
+// // connect with database
+// console.log(process.env);
 connectWithDB();
 
 // cloudinary configuration
@@ -27,14 +28,15 @@ app.use(
     name: "session",
     maxAge: process.env.COOKIE_TIME * 24 * 60 * 60 * 1000,
     keys: [process.env.SESSION_SECRET],
-    secure: true, // Only send over HTTPS
-    sameSite: "none", // Allow cross-origin requests
-    httpOnly: true, // Makes the cookie accessible only on the server-side
+    // secure: true, // Only send over HTTPS
+    // sameSite: "none", // Allow cross-origin requests
+    // httpOnly: true, // Makes the cookie accessible only on the server-side
   })
 );
 
 // middleware to handle json
 app.use(express.json());
+// app.use("/user", userRoutes);
 
 // CORS
 app.use(
