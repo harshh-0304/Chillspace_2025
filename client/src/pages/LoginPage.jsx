@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { GoogleLogin } from '@react-oauth/google';
-
 import ProfilePage from './ProfilePage';
 import { useAuth } from '../../hooks';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [redirect, setRedirect] = useState(false);
+  const [redirectPath, setRedirectPath] = useState('/');
   const auth = useAuth();
 
   const handleFormData = (e) => {
@@ -22,12 +22,16 @@ const LoginPage = () => {
     const response = await auth.login(formData);
     if (response.success) {
       toast.success(response.message);
-      // 🧠 Save user in localStorage
-  localStorage.setItem("user", JSON.stringify(response.user));
-  if (response.token) {
-    localStorage.setItem("token", response.token);
-  }
-  setRedirect(true);
+      console.log(response.user);
+      console.log(response.user.role);
+      // Determine redirect path based on user role
+      if (response.user.role === 'admin') {
+        setRedirectPath('/admin');
+      } else {
+        setRedirectPath('/');
+      }
+
+      setRedirect(true);
     } else {
       toast.error(response.message);
     }
@@ -37,6 +41,14 @@ const LoginPage = () => {
     const response = await auth.googleLogin(credential);
     if (response.success) {
       toast.success(response.message);
+
+      // Determine redirect path based on user role
+      if (auth.user && auth.user.role === 'admin') {
+        setRedirectPath('/admin');
+      } else {
+        setRedirectPath('/');
+      }
+
       setRedirect(true);
     } else {
       toast.error(response.message);
@@ -44,17 +56,23 @@ const LoginPage = () => {
   };
 
   if (redirect) {
-    return <Navigate to={'/'} />;
+    return <Navigate to={redirectPath} />;
   }
 
   if (auth.user) {
-    return <ProfilePage />;
+    return auth.user.role === 'admin' ? (
+      <Navigate to="/admin" />
+    ) : (
+      <ProfilePage />
+    );
   }
 
   return (
     <div className="mt-4 flex grow items-center justify-around p-4 md:p-0">
       <div className="mb-40">
-        <h1 className="mb-4 text-center text-4xl"  style={{ marginTop: "30px" }}>Login</h1>
+        <h1 className="mb-4 text-center text-4xl" style={{ marginTop: '30px' }}>
+          Login
+        </h1>
         <form className="mx-auto max-w-md" onSubmit={handleFormSubmit}>
           <input
             name="email"
@@ -62,6 +80,7 @@ const LoginPage = () => {
             placeholder="your@email.com"
             value={formData.email}
             onChange={handleFormData}
+            className="mb-2 w-full rounded-md border border-gray-300 p-2"
           />
           <input
             name="password"
@@ -69,8 +88,11 @@ const LoginPage = () => {
             placeholder="password"
             value={formData.password}
             onChange={handleFormData}
+            className="mb-2 w-full rounded-md border border-gray-300 p-2"
           />
-          <button className="primary my-4">Login</button>
+          <button className="primary my-4 w-full rounded-md bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-600">
+            Login
+          </button>
         </form>
 
         <div className="mb-4 flex w-full items-center gap-4">
