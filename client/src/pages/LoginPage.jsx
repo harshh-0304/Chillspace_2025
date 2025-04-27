@@ -24,6 +24,7 @@ const LoginPage = () => {
       toast.success(response.message);
       console.log(response.user);
       console.log(response.user.role);
+      const role = localStorage.setItem(response.user.role)
       // Determine redirect path based on user role
       if (response.user.role === 'admin') {
         setRedirectPath('/admin');
