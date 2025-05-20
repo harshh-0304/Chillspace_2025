@@ -13,7 +13,7 @@
   "author": "harshh",
   "license": "ISC",
   "engines": {
-  "node": ">=18"
+  "node": ">=18.0.0 <19"
 }
 
   ,
