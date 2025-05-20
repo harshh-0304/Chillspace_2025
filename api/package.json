@@ -12,7 +12,11 @@
   ],
   "author": "harshh",
   "license": "ISC",
-  
+  "engines": {
+  "node": ">=18"
+}
+
+  ,
   "dependencies": {
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
