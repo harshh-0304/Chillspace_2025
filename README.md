@@ -108,4 +108,4 @@ This project is a full-stack web application developed as a clone of Airbnb usin
 
 
 
-deployed project link : https://chilspace-7yzrmkt7f-harshh-0304s-projects.vercel.app/
+deployed project link : https://chilspace.vercel.app
